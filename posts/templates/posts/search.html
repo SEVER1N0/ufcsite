@@ -21,7 +21,7 @@
         </a>
         <p>{{ post.titulo }}</p>
         <p>{{ post.conteudo }}</p>
-        <p>{{ post.data_postagem}}</p>
+        <p>{{ post.data_postagem|date:"d M Y"}}</p>
       </article>
     {% endfor %}
 </section>

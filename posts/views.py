@@ -1,20 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from .temp_data import post_data
+from django.urls import reverse, reverse_lazy
 from .models import Post
 from .forms import PostForm
+from django.views import generic
 
-def lista_posts(request):
-    # posts = Post.objects.all().order_by('-data_postagem')
-    post_list = Post.objects.all()
-    context = {"post_list": post_list}
-    return render(request, 'posts/index.html', context)
 
-def detalhe_post(request, post_id):
-    post =  get_object_or_404(Post, pk=post_id)
-    context = {'post': post}
-    return render(request, 'posts/detail.html', context)
+class PostListView(generic.ListView):
+    model = Post
+    template_name = 'posts/index.html'
+
+class PostDetailView(generic.DetailView):
+    model = Post
+    template_name = 'posts/detail.html'
+    context_object_name = 'post'
 
 def search_posts(request):
     context = {}
@@ -24,55 +23,22 @@ def search_posts(request):
         context = {"post_list": post_list}
     return render(request, 'posts/search.html', context)
 
-def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post_titulo = form.cleaned_data['titulo']
-            post_conteudo = form.cleaned_data['conteudo']
-            post_poster_url = form.cleaned_data['poster_url']
-            post = Post(titulo=post_titulo,
-                        conteudo=post_conteudo,
-                        poster_url=post_poster_url)
-            post.save()
-            return HttpResponseRedirect(
-                reverse('posts:detail', args=(post.id, )))
-    else:
-        form = PostForm()
-        context = {'form': form}
-        return render(request, 'posts/create.html', context)
+class PostCreateView(generic.CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'posts/create.html'
+    success_url = reverse_lazy('posts:index')
     
-def update_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post.titulo = form.cleaned_data['titulo']
-            post.conteudo = form.cleaned_data['conteudo']
-            post.poster_url = form.cleaned_data['poster_url']
-            post.save()
-            return HttpResponseRedirect(
-                reverse('posts:detail', args=(post.id, )))
-
-    else:
-        form = PostForm(
-            initial={
-                'titulo': post.titulo,
-                'conteudo': post.conteudo,
-                'poster_url': post.poster_url
-            })
-
-    context = {'post': post, 'form': form}
-    return render(request, 'posts/update.html', context)
+class PostUpdateView(generic.UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'posts/update.html'
+    context_object_name = 'post'
+    success_url = reverse_lazy('posts:index')
 
 
-def delete_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-
-    if request.method == "POST":
-        post.delete()
-        return HttpResponseRedirect(reverse('posts:index'))
-
-    context = {'post': post}
-    return render(request, 'posts/delete.html', context)
+class PostDeleteView(generic.DeleteView):
+    model = Post
+    template_name = 'posts/delete.html'
+    context_object_name = 'post'
+    success_url = reverse_lazy('posts:index')
