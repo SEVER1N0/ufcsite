@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Atualizar Dados do Post {{ post.titulo }} </h2>
+<form method="post" action="{% url 'posts:update' post.id%}">
+  {% csrf_token %}
+  <p>
+    <label for="id_titulo">Título:</label>
+    <input type="text" name="titulo" id="id_titulo" value="{{ post.titulo }}" />
+  </p>
+  <p>
+    <label for=" id_conteudo">Conteudo:</label>
+    <input
+      type="text"
+      name="conteudo"
+      id="id_conteudo"
+      value="{{ post.conteudo }}"
+    />
+</p>
+  <p>
+    <label for=" id_poster_url">URL da imagem:</label>
+    <input
+      type="url"
+      name="poster_url"
+      id="id_poster_url"
+      value="{{post.poster_url}}"
+    />
+</p>
+  <button type="submit">Atualizar</button>
+</form>
+{% endblock content %}

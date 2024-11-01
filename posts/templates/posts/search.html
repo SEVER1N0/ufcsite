@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Busca de Posts por título</h2>
+<form action="{% url 'posts:search' %}">
+    <p>
+        <label for="id_query">Título:</label>
+        <input type="text" name="query" id="id_query" />
+    </p>
+    <button type="submit">Buscar</button>
+</form>
+
+
+<h2>Resultado da Busca</h2>
+{% if post_list %}
+<section class="lista-de-cards">
+    {% for post in post_list %}
+    <article class="card">
+        <a href="{% url 'posts:detail' post.id %}"> 
+          <img src="{{ post.poster_url }}" alt="Imagem do post {{ post.titulo }}" />
+        </a>
+        <p>{{ post.titulo }}</p>
+        <p>{{ post.conteudo }}</p>
+        <p>{{ post.data_postagem}}</p>
+      </article>
+    {% endfor %}
+</section>
+{% else %}
+<p>Não foi encontrado nenhum post para a busca.</p>
+{% endif %}
+
+{% endblock content %}

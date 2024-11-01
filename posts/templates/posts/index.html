@@ -1,12 +1,24 @@
 {% extends 'base.html' %} {% block content %}
 <h2>Todos os Posts</h2>
+<section>
+  <p>
+    Muitos resultados? <a href="{% url 'posts:search' %}">Buscar Posts</a>
+  </p>
+  <p>
+    Não encontrou o que queria?
+    <a href="{% url 'posts:create' %}">Adicionar Novo Post</a>
+  </p>
+</section>
 {% if post_list %}
 <section class="lista-de-cards">
   {% for post in post_list %}
   <article class="card">
-    <a href="{% url 'posts:detail' forloop.counter %}"
-      ></a>
-    <p>{{ post.titulo }} {{ post.conteudo }} {{ post.data_postagem}}</p>
+    <a href="{% url 'posts:detail' post.id %}"> 
+      <img src="{{ post.poster_url }}" alt="Imagem do post {{ post.titulo }}" />
+    </a>
+    <p>{{ post.titulo }}</p>
+    <p>{{ post.conteudo }}</p>
+    <p>{{ post.data_postagem}}</p>
   </article>
   {% endfor %}
 </section>
