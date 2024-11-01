@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .temp_data import post_data
 from .models import Post
+from .forms import PostForm
 
 def lista_posts(request):
     # posts = Post.objects.all().order_by('-data_postagem')
@@ -25,30 +26,44 @@ def search_posts(request):
 
 def create_post(request):
     if request.method == 'POST':
-        post_titulo = request.POST['titulo']
-        post_conteudo = request.POST['conteudo']
-        post_poster_url = request.POST['poster_url']
-        post = Post(titulo=post_titulo,
-                      conteudo=post_conteudo,
-                      poster_url=post_poster_url)
-        post.save()
-        return HttpResponseRedirect(
-            reverse('posts:detail', args=(post.id, )))
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post_titulo = form.cleaned_data['titulo']
+            post_conteudo = form.cleaned_data['conteudo']
+            post_poster_url = form.cleaned_data['poster_url']
+            post = Post(titulo=post_titulo,
+                        conteudo=post_conteudo,
+                        poster_url=post_poster_url)
+            post.save()
+            return HttpResponseRedirect(
+                reverse('posts:detail', args=(post.id, )))
     else:
-        return render(request, 'posts/create.html', {})
+        form = PostForm()
+        context = {'form': form}
+        return render(request, 'posts/create.html', context)
     
 def update_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
 
     if request.method == "POST":
-        post.titulo = request.POST['titulo']
-        post.conteudo = request.POST['conteudo']
-        post.poster_url = request.POST['poster_url']
-        post.save()
-        return HttpResponseRedirect(
-            reverse('posts:detail', args=(post.id, )))
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post.titulo = form.cleaned_data['titulo']
+            post.conteudo = form.cleaned_data['conteudo']
+            post.poster_url = form.cleaned_data['poster_url']
+            post.save()
+            return HttpResponseRedirect(
+                reverse('posts:detail', args=(post.id, )))
 
-    context = {'post': post}
+    else:
+        form = PostForm(
+            initial={
+                'titulo': post.titulo,
+                'conteudo': post.conteudo,
+                'poster_url': post.poster_url
+            })
+
+    context = {'post': post, 'form': form}
     return render(request, 'posts/update.html', context)
 
 

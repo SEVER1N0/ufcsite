@@ -5,7 +5,7 @@
       <img src="{{ post.poster_url }}" alt="Imagem do post: {{post.titulo}}" />
       <ul>
         <li>Titulo: {{ post.titulo }}</li>
-        <li>Data de postagem: {{ post.data_postagem }}</li>
+        <li>Data de postagem: {{ post.data_postagem|date:"d M Y" }}</li>
         <li>{{ post.conteudo }}</li>
 
         <li><a href="{% url 'posts:update' post.id %}">Editar<a></li>
