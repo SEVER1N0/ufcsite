@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
 from django.views import generic
 
 
@@ -14,6 +14,11 @@ class PostDetailView(generic.DetailView):
     model = Post
     template_name = 'posts/detail.html'
     context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.order_by('-created_date')
+        return context
 
 def search_posts(request):
     context = {}
@@ -42,3 +47,21 @@ class PostDeleteView(generic.DeleteView):
     template_name = 'posts/delete.html'
     context_object_name = 'post'
     success_url = reverse_lazy('posts:index')
+
+def create_comment(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment_author = form.cleaned_data['author']
+            comment_text = form.cleaned_data['text']
+            comment = Comment(author=comment_author,
+                            text=comment_text,
+                            post=post)
+            comment.save()
+            return HttpResponseRedirect(
+                reverse('posts:detail', args=(post_id, )))
+    else:
+        form = CommentForm()
+    context = {'form': form, 'post': post}
+    return render(request, 'posts/comment.html', context)
