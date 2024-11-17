@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-nkn@yl)g--%me$*zy!yx_j#y5g$_8$%45zpjova7i$8y((2x!w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", ".onrender.com", '*'] 
+ALLOWED_HOSTS = ["127.0.0.1", "ufcsite.onrender.com"] 
 
 CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com/"] 
 
@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'ufcsite.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL')
+        default=os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3')
     )
 }
 
