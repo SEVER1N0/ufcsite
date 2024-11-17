@@ -1,16 +1,46 @@
-{% extends 'base.html' %} {% block title %} {{ post.titulo }}  {% endblock title %} {% block content %}
+{% extends 'base.html' %}
+
+{% block title %} {{ post.titulo }} {% endblock title %}
+
+{% block content %}
     <h2>Detalhes do Post {{ post.titulo }}</h2>
-    
+
     <section class="dados-de-filme">
-      <img src="{{ post.poster_url }}" alt="Imagem do post: {{post.titulo}}" />
+      <img src="{{ post.poster_url }}" alt="Imagem do post: {{ post.titulo }}" />
       <ul>
         <li>Titulo: {{ post.titulo }}</li>
         <li>Data de postagem: {{ post.data_postagem|date:"d M Y" }}</li>
         <li>{{ post.conteudo }}</li>
-
-        <li><a href="{% url 'posts:update' post.id %}">Editar<a></li>
-        <li><a href="{% url 'posts:delete' post.id %}">Apagar<a></li>
+        <li><a href="{% url 'posts:update' post.id %}">Editar</a></li>
+        <li><a href="{% url 'posts:delete' post.id %}">Apagar</a></li>
       </ul>
     </section>
-    
-    {% endblock content %}
+
+    <hr>
+
+    <section class="comments-section">
+      <header>
+          <h3>Comentários</h3>
+      </header>
+      <ul>
+          {% if comments %}
+              {% for comment in comments %}
+                  <li class="comment-item">
+                      <p class="comment-text">{{ comment.text|escape }}</p>
+                      <p class="comment-meta"><small>Por {{ comment.author }} em {{ comment.created_date|date:"d M Y" }}</small></p>
+                  </li>
+              {% endfor %}
+          {% else %}
+              <li class="no-comments">Ainda não existe nenhum comentário para este post.</li>
+          {% endif %}
+      </ul>
+    </section>
+
+    <hr>
+
+    <section>
+        <a href="{% url 'posts:comment' post.pk %}">
+            <button>Crie seu Comentário</button>
+        </a>
+    </section>
+{% endblock content %}
