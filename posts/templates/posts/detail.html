@@ -4,7 +4,16 @@
 
 {% block content %}
     <h2>Detalhes do Post {{ post.titulo }}</h2>
-
+    <h3>Categorias:</h3>
+        <ul>
+          {% if post.categories.all %}
+            {% for category in post.categories.all %}
+              <li><a href="{% url 'posts:category_detail' category.id %}">{{ category.name }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li class="no-category">Este post não pertence a nenhuma categoria</li>
+          {% endif %}    
+        </ul>
     <section class="dados-de-filme">
       <img src="{{ post.poster_url }}" alt="Imagem do post: {{ post.titulo }}" />
       <ul>
