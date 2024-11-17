@@ -3,6 +3,7 @@
 <form method="POST" action="{% url 'posts:create' %}">
   {% csrf_token %}
     {{ form.as_p }}
+  <p>(Ctrl + Clique para selecionar mais de uma categoria)</p>
   <button type="submit">Criar</button>
 </form>
 

@@ -1,15 +1,24 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Post, Comment
+from .models import Post, Comment, Category
 
 
 class PostForm(ModelForm):
+
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.SelectMultiple,
+        required=False,
+        label="Categorias"
+    )
+
     class Meta:
         model = Post
         fields = [
             'titulo',
             'conteudo',
             'poster_url',
+            'categories'
         ]
         labels = {
             'titulo': 'Título',
